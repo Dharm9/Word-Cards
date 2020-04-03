@@ -10,13 +10,34 @@
 	<meta name="keywords" content="blueprint, template, html, css, page stack, 3d, perspective, navigation, menu" />
 	<meta name="author" content="Codrops" />
 	<link rel="shortcut icon" href="favicon.ico">
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="css/demo.css" />
+<!--	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
+  <link rel="stylesheet" type="text/css" href="css/demo.css" />
 	<link rel="stylesheet" type="text/css" href="css/component.css" />
 	<link rel="stylesheet" type="text/css" href="css/input.css" />
 	<link rel="stylesheet" type="text/css" href="css/cards.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script> -->
 	<script src="js/modernizr-custom.js"></script>
+	<style media="screen">
+		.slick-slide {
+			outline: none;
+			margin-left: 8px;
+			margin-right: 8px;
+		}
+
+		@media only screen and (min-width: 768px) {
+		/* For desktop: */
+		  .slick-slide {
+				margin-left: 0;
+				margin-right: 0;
+			}
+		}
+	</style>
 </head>
 
 <body>
@@ -40,26 +61,27 @@
 				<div ng-app="myApp" ng-controller="myCtrl">
 					<div class="row">
 						<span>
-					    <input class="clean-slide" id="session" type="number" placeholder="Which Chapter!" /><label for="age">Session</label>
+					    <input class="clean-slide" id="session" type="number" ng-model="ses" placeholder="Which Chapter!" ng-change="ref()"/><label for="session">Session</label>
 						</span>
 					</div>
 					<div class="row">
-						<div class="scene">
-							<div class="card">
-								<h3 class="card__face--left">type</h3>
-								<h3 class="card__face--right">pronoun</h3>
-								<div class="card__face card__face--front">
-									<h1>WORD</h1>
-								</div>
-								<div class="card__face card__face--back">
-									<h1>WORD</h1>
-									<p style="text-align:justify">We cannot have peace among men whose hearts find delight in killing any living creature. We cannot have peace among men whose hearts find delight in killing any living creature
-										We cannot have peace among men whose hearts find delight in killing any living creature <br>
-									We cannot have peace among men whose hearts find delight in killing any living creature <br>
-								We cannot have peace among men whose hearts find delight in killing any living creature</p>
+						<div class="my-words">
+							<div class="scene" ng-repeat="word in words[ses]">
+								<div class="cards" ng-class="{true: 'is-flipped'}[c%2 == 1]" ng-click="c = c+1">
+									<h3 class="card__face--left">{{word.type}}</h3>
+									<h3 class="card__face--right">{{word.pronoun}}</h3>
+									<h3 class="card__face--bottom">{{$index+1 + ' / ' +words[ses].length}}</h3>
+									<div class="card__face card__face--front">
+										<h1>{{word.word_search}}</h1>
+									</div>
+									<div class="card__face card__face--back">
+										<h1>{{word.word_search}}</h1>
+										<p style="text-align:justify">{{word.def}}</p>
+									</div>
 								</div>
 							</div>
-						</div>
+					  </div>
+
 					</div>
 				</div>
 			</header>
@@ -108,37 +130,76 @@
 				<p class="info">
 					"Man is the only animal that can remain on friendly terms with the victims he intends to eat until he eats them." &mdash; Samuel Butler
 				</p>
+				<div class="e">
+					<div class="dd">
+					<div class="example">First div element with class="example".</div>
+					</div>
+					</div>
+					<div class="example">Second div element with class="example".</div>
+
 			</header>
 			<img class="poster" src="images/4.jpg" alt="img04" />
 		</div>
 	</div>
 	<!-- /pages-stack -->
 	<button class="menu-button"><span>Menu</span></button>
+
 	<script src="js/classie.js"></script>
 	<script src="js/main.js"></script>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <script type="text/javascript" src="slick/slick.min.js"></script>
+
 	<script type="text/javascript">
 		var app = angular.module('myApp', []);
+
 		app.controller('myCtrl', function($scope, $http) {
 
-			var config = {
-				headers:  {
-					'Access-Control-Allow-Origin': '*',
-	        'Accept': 'application/json'
-		    }
-			};
+			$scope.ses = 1;
+			$scope.len = 0;
 
-		  $http.get("json/words.json", config)
+			$scope.ref = function() {
+				setTimeout(refresh, 1);
+				$scope.len = $scope.words[$scope.ses].length;
+				console.log($scope.words[$scope.ses]);
+			}
+
+		  $http.get("json/words.json")
 		  .then(function(response) {
 		    $scope.words = response.data;
-				console.log($scope.words);
+				$scope.len = $scope.words[$scope.ses].length;
+				//console.log($scope.words);
+				setTimeout(init, 1);
 		  });
 		});
 	</script>
+
 	<script type="text/javascript">
-    var card = document.querySelector('.card');
-    card.addEventListener( 'click', function() {
-      card.classList.toggle('is-flipped');
-    });
+		function init(){
+			console.log("init");
+			$('.my-words').slick({
+				infinite: true,
+				slidesToShow: 1,
+				slidesToScroll: 1
+			});
+			$('.my-words').on('unslick', function(event, slick, currentSlide, nextSlide) {
+				for (var i = 0; i < slick.slideCount; i++) {
+					$('.my-words').slick('slickRemove', i - 1);
+				}
+			});
+		};
+		function refresh() {
+			//console.log(len);
+			console.log("refresh");
+
+			$('.my-words').slick('unslick');
+			$(".my-words").not('.slick-initialized').slick({
+				infinite: true,
+				slidesToShow: 1,
+				slidesToScroll: 1
+			});
+		}
   </script>
 </body>
 
